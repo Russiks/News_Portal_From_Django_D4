@@ -1,0 +1,18 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+
+{% block title %}
+Post
+{% endblock title %}
+
+
+{% block content %}
+<h1>Свежие новости</h1>
+<b> &nbsp Автор: &nbsp </b> {{ post.author }}<br>
+{{ post.dateCreation|date:'d-M-Y H:m' }}<br>
+<b> &nbsp {{ post.title|censor }} &nbsp </b> </br>
+{{ post.text|censor }}
+{% endblock content %}

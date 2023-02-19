@@ -1,0 +1,200 @@
+Создать пользователей (с помощью метода User.objects.create_user).
+
+>>> user1 = User.objects.create_user(username='Topa')
+>>> user2 = User.objects.create_user(username='Liter')
+>>> user3 = User.objects.create_user(username='Russiks')
+>>> user4 = User.objects.create_user(username='SkillFA')
+
+
+Создать два объекта модели Author, связанные с пользователями.
+>>> Author.objects.create(autorUsers=user4)
+>>> Author.objects.create(autorUsers=user3)
+
+Добавить 4 категории в модель Category.
+>>> Category.objects.create(name='Django')
+>>> Category.objects.create(name='Python')
+>>> Category.objects.create(name='News IT')
+>>> Category.objects.create(name='About')
+
+Добавить 2 статьи и 1 новость.
+>>> author = Author.objects.get(id=2)
+>>> author2 = Author.objects.get(id=1)
+>>> Post.objects.create(author=author, categoryType='NW', title='Firstnews', text='SomeBigText')
+>>> Post.objects.create(author=author, categoryType='AR', title='Firstarticle', text='SomeBigText')
+>>> Post.objects.create(author=author2, categoryType='AR', title='Newarticle', text='SomeBigText')
+>>> Post.objects.create(author=author2, categoryType='AR', title='Newarticle', text='SomeBigText')
+
+Присвоить им категории (как минимум в одной статье/новости должно быть не меньше 2 категорий).
+>>> Post.objects.get(id=1).postCategory.add(Category.objects.get(id=1))
+>>> Post.objects.get(id=2).postCategory.add(Category.objects.get(id=2))
+>>> Post.objects.get(id=3).postCategory.add(Category.objects.get(id=3))
+>>> Post.objects.get(id=3).postCategory.add(Category.objects.get(id=4))
+>>> PostCategory.objects.create(postThrough=Post.objects.get(id=4), categoryThrough=Category.objects.get(id=3))
+
+
+Создать как минимум 4 комментария к разным объектам модели Post (в каждом объекте должен быть как минимум один комментарий).
+>>> Comment.objects.create(commentPost=Post.objects.get(id=1), commentUser=User.objects.get(id=1), text='Some Comment 1')
+>>> Comment.objects.create(commentPost=Post.objects.get(id=2), commentUser=User.objects.get(id=3), text='Some Comment 1')
+>>> Comment.objects.create(commentPost=Post.objects.get(id=2), commentUser=User.objects.get(id=3), text='Comment from Russiks')
+>>> Comment.objects.create(commentPost=Post.objects.get(id=3), commentUser=User.objects.get(id=4), text='Comment from SkillFA')
+>>> Comment.objects.create(commentPost=Post.objects.get(id=4), commentUser=User.objects.get(id=2), text='Comment from Liter')
+>>> Comment.objects.create(commentPost=Post.objects.get(id=4),commentUser=Author.objects.get(id=2).autorUsers, text='Comment from Author')
+>>> Comment.objects.create(commentPost=Post.objects.get(id=1),commentUser=Author.objects.get(id=1).autorUsers, text='Comment from Author2')
+
+Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов.
+>>> post1 = Post.objects.get(id=1)
+>>> post2 = Post.objects.get(id=2)
+>>> post3 = Post.objects.get(id=3)
+>>> post4 = Post.objects.get(id=4)
+
+>>> post1.like()
+>>> post1.like()
+>>> post1.like()
+>>> post2.like()
+>>> post2.like()
+>>> post2.like()
+>>> post2.like()
+>>> post2.like()
+>>> post2.like()
+>>> post3.like()
+>>> post3.like()
+>>> post3.like()
+>>> post3.like()
+>>> post3.like()
+>>> post3.like()
+>>> post3.like()
+>>> post3.like()
+>>> post3.like()
+
+>>> comment1 = Comment.objects.get(id=1)
+>>> comment2 = Comment.objects.get(id=2)
+>>> comment3 = Comment.objects.get(id=3)
+>>> comment4 = Comment.objects.get(id=4)
+>>> comment5 = Comment.objects.get(id=5)
+>>> comment6 = Comment.objects.get(id=6)
+>>> comment7 = Comment.objects.get(id=7)
+
+>>> post1.dislike()
+>>> post2.dislike()
+>>> post3.dislike()
+>>> post3.dislike()
+>>> post3.dislike()
+>>> post3.dislike()
+>>> post3.dislike()
+>>> post4.dislike()
+>>> post4.dislike()
+>>> post4.dislike()
+>>> post4.dislike()
+>>> post4.dislike()
+
+>>> comment1.like()
+>>> comment1.like()
+>>> comment1.like()
+>>> comment1.like()
+>>> comment2.like()
+>>> comment2.like()
+>>> comment2.like()
+>>> comment2.like()
+>>> comment2.like()
+>>> comment2.like()
+>>> comment2.like()
+>>> comment2.like()
+>>> comment2.like()
+>>> comment2.like()
+
+>>> comment3.dislike()
+>>> comment3.dislike()
+>>> comment3.dislike()
+>>> comment3.dislike()
+>>> comment3.dislike()
+>>> comment3.dislike()
+
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment5.like()
+>>> comment5.like()
+>>> comment5.like()
+>>> comment5.like()
+>>> comment5.like()
+>>> comment5.like()
+>>> comment5.like()
+>>> comment5.like()
+>>> comment5.like()
+>>> comment5.like()
+>>> comment5.like()
+>>> comment5.like()
+
+>>> comment5.dislike()
+>>> comment5.dislike()
+>>> comment5.dislike()
+>>> comment5.dislike()
+>>> comment5.dislike()
+
+>>> comment5.dislike()
+
+>>> comment6.like()
+>>> comment7.like()
+>>> comment7.like()
+>>> comment7.like()
+>>> comment7.like()
+
+>>> comment7.dislike()
+
+Обновить рейтинги пользователей.
+>>> author_rat = Author.objects.get(id=1)
+>>> author_rat.update_rating()
+>>> Author.objects.get(id=2).update_rating()
+
+Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта).
+>>> name_top = Author.objects.order_by('-autorUsers')[:1]
+>>> for i in name_top:
+...     i.autorUsers.username
+...     i.autorUsers
+... 
+'SkillFA'
+<User: SkillFA>
+>>> name_top = Author.objects.order_by('-autorUsers')[:1]
+>>> for i in name_top:
+...     i.autorUsers.username
+...     i.ratingAuthor
+... 
+'SkillFA'
+14
+
+Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+>>> post = Post.objects.order_by('-rating')[:1]
+>>> for i in post:
+...     i.dateCreation
+...     i.author.autorUsers.username
+...     i.rating
+...     i.title
+...     i.preview()
+... 
+datetime.datetime(2023, 2, 9, 14, 6, 36, 118259, tzinfo=datetime.timezone.utc)
+'Russiks'
+5
+'Firstarticle'
+'SomeBigText + ...'
+
+Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье.
+post[0].comment_set.all().values('dateCreation', 'commentUser', 'text', 'rating')
+<QuerySet [{'dateCreation': datetime.datetime(2023, 2, 9, 15, 44, 23, 47896, tzinfo=datetime.timezone.utc), 
+'commentUser': 3, 
+'text': 'Some Comment 1', 
+'rating': 10}, 
+{'dateCreation': datetime.datetime(2023, 2, 9, 16, 30, 0, 444524, tzinfo=datetime.timezone.utc), 
+'commentUser': 3, 
+'text': 
+'Comment from Russiks', 'rating': -6}]>

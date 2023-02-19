@@ -1,0 +1,144 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+
+{% block title %}
+Publication
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим все товары -->
+{% block content %}
+ <h1>Publication</h1>
+<!--<label for="party">Пример шаблона выбора дат:</label>-->
+<!--<input-->
+<!--  id="party"-->
+<!--  type="datetime-local"-->
+<!--  name="partydate"-->
+<!--  value="" />-->
+    <h3>{{ time_now|date:'d-M-Y H:m' }}</h3> <!-- Здесь мы применяем фильтр date. Он очень похож на метод strftime у даты. С его помощью мы можем выводить дату в нужном нам формате -->
+    <!-- <h3> {{ value1|default_if_none:"ничего" }} </h3>  Здесь, если в переменной value1 будет записано None, то выведется текст НИЧЕГО -->
+     <h4> {{ next_sale|default_if_none:"" }} </h4>
+       {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
+   <form action="" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form }}
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Поиск" />
+   </form>
+    <hr>
+    {% if news %} <!-- Если есть новости, то выводим таблицу с ними -->
+    <table>
+        <tr>
+            <td>
+                <h6> Заголовок &nbsp </h6>
+            </td>
+            <td>
+                <h6> &nbsp Дата публикации &nbsp </h6>
+            </td>
+            <td>
+                <h6> &nbsp Вид публикации &nbsp </h6>
+            </td>
+             <td>
+                <h6> &nbsp News ID &nbsp </h6>
+            </td>
+            <td>
+                <h6> &nbsp Редактирование &nbsp </h6>
+            </td>
+            <td>
+                <h6> &nbsp Удаление &nbsp </h6>
+            </td>
+            <td>
+                <h6> &nbsp Содержание публикации &nbsp </h6>
+            </td>
+         </tr>
+    {% for news in news %} <!-- Для каждой новости будет генерироваться новая строчка, т. е. новый html-код. При этом сам цикл работает точно также, как и в Python. news — переменная цикла, т. е. наша новость, взятая из общего списка -->
+        <tr>
+            <td>
+                <a href="{% url 'post_detail' news.id %}">{{ news.title|truncatechars:20|censor }}</a> <!-- Не забываем, что переменные в шаблоне ничем не отличаются от переменных в Python. Здесь также можно получать доступ к полям класса. Например, здесь мы выводим имя, в следующем столбце описание, и т. д.  -->
+            </td>
+            <td>
+                {{ news.dateCreation|date:'d-M-Y H:m' }}
+            </td>
+            <td>
+                {{ news.categoryType }}
+            </td>
+            <td>
+                {{ news.id }}
+            </td>
+            <td>
+                <a href="{% url 'post_update' news.id %}"><u>Edit</u></a>
+            </td>
+            <td>
+                <a href="{% url 'post_delete' news.id %}"><u>Edit</u></a>
+            </td>
+            <td>
+                {{ news.text|truncatechars:50|censor }} <!-- truncatechars - фильтр по символам, truncatewords - фильтр по словам -->
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+<a href="{% url 'post_create' %}">Добавить статью</a> <br> <a href="{% url 'news_create' %}">Добавить новость</a> <br>
+    {% else %}
+        <h1>Новостей нет!</h1>
+    {% endif %}
+{# Добавляем пагинацию на страницу #}
+
+   {# Информация о предыдущих страницах #}
+   {% if page_obj.has_previous %}
+       {# Для каждой ссылки пагинации указываем обработку через новый тег #}
+        <a href="?{% url_replace page=1 %}"><<<</a>
+<!--       <a href="?{% url_replace page=1 %}">1</a>-->
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# Информация о текущей странице #}
+   {{ page_obj.number }}
+
+
+   {# Информация о следующих страницах #}
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+            <a href="?{% url_replace page=page_obj.paginator.num_pages %}">>>></a>
+<!--           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>-->
+<!--            <a href="?{% url_replace page=page_obj.paginator.num_pages %}">>>></a>-->
+       {% endif %}
+   {% endif %}
+<!--    {# Добавляем пагинацию на страницу #}-->
+
+<!--   {# Информация о предыдущих страницах #}-->
+<!--   {% if page_obj.has_previous %}-->
+<!--       <a href="?page=1">1</a>-->
+<!--       {% if page_obj.previous_page_number != 1 %}-->
+<!--           ...-->
+<!--           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>-->
+<!--       {% endif %}-->
+<!--   {% endif %}-->
+
+<!--   {# Информация о текущей странице #}-->
+<!--   {{ page_obj.number }}-->
+
+<!--   {# Информация о следующих страницах #}-->
+<!--   {% if page_obj.has_next %}-->
+<!--       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>-->
+<!--       {% if paginator.num_pages != page_obj.next_page_number %}-->
+<!--           ...-->
+<!--           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>-->
+<!--       {% endif %}-->
+<!--   {% endif %}-->
+<!--page_obj — это объект, в котором содержится информация о текущей странице. Сам он приходит из класса Paginator, который уже содержится в ListView.-->
+<!--В page_obj мы имеем доступ к следующим переменным:-->
+<!--has_previous — существует ли предыдущая страница;-->
+<!--previous_page_number — номер предыдущей страницы;-->
+<!--number — номер текущей страницы;-->
+<!--has_next — существует ли следующая страница;-->
+<!--next_page_number — номер следующей страницы;-->
+<!--paginator.num_pages — объект paginator содержит информацию о количестве страниц в переменной num_pages.-->
+{% endblock content %}

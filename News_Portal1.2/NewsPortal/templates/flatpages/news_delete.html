@@ -1,0 +1,59 @@
+{% extends 'flatpages/default.html' %}
+
+<!--Загрузка собственных фильтров из файла custom_filters.py-->
+{% load custom_filters %}
+
+{% block content %}
+<h2>Вы действительно хотите удалить данную публикацию?</h2>
+<hr>
+<!--В таблице выводим информацию о посте-->
+<table>
+    <thead>
+        <th>
+            <b>Автор публикации</b>
+        </th>
+        <th>
+            <b>Тип публикации</b>
+        </th>
+        <th>
+            <b>Время публикации</b>
+        </th>
+        <th>
+            <b>Заголовок публикации</b>
+        </th>
+        <th>
+            <b>Содержание публикации</b>
+        </th>
+        <th>
+            <b>Рейтинг публикации</b>
+        </th>
+    </thead>
+    <br>
+    <!--Вывод полей модели-->
+    <tr>
+        <td>
+            {{ post.author }}
+        </td>
+        <td>
+            {{ post.categoryType}}
+        </td>
+        <td>
+            {{ post.dateCreation }}
+        </td>
+        <td>
+            {{ post.title|truncatechars:50|censor }}
+        </td>
+        <td>
+            {{ post.text|truncatechars:128|censor }}
+        </td>
+        <td>
+            {{ post.rating }}
+        </td>
+    </tr>
+</table>
+<form action="" method="POST">
+    {% csrf_token %}
+    <p>Вы уверены в удаление <b>"{{ post.title }}"?</b></p>
+    <input type="submit" value="Удалить!" />
+</form>
+{% endblock content %}
